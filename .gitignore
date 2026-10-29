@@ -1,0 +1,24 @@
+# Python / tooling
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+
+# Local copies of weights (the tracked weights live in road_damage_app/models/)
+/models/
+/results.csv
+road_damage_app/yolo11n.pt
+evaluation/weights/
+evaluation/exports/
+*.onnx
+
+# Dataset images (download with evaluation/download_test_data.py)
+evaluation/data/test/
+
+# Evaluation run artefacts: keep the JSON summaries and confusion matrices only
+evaluation/results/data_abs.yaml
+evaluation/results/*_onnx_test/
+evaluation/results/*_test/*
+!evaluation/results/*_test/confusion_matrix*.png

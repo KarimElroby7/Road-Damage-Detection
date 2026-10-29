@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Road Damage Detection</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg?v=6">
+  <link rel="stylesheet" href="/static/styles.css?v=6">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="logo" src="/static/logo.svg?v=6" alt="" aria-hidden="true">
+      <div>
+        <h1>Road Damage Detection</h1>
+        <p>YOLO · FastAPI</p>
+      </div>
+    </div>
+    <div class="model-badge" id="modelBadge">
+      <span class="dot"></span><span id="modelText">Connecting…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel controls">
+      <div class="tabs" role="tablist">
+        <button role="tab" class="tab active" data-mode="image" aria-selected="true">Image</button>
+        <button role="tab" class="tab" data-mode="video" aria-selected="false">Video</button>
+        <button role="tab" class="tab" data-mode="webcam" aria-selected="false">Webcam</button>
+      </div>
+
+      <section data-panel="image">
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="imageInput" accept="image/*" hidden>
+          <strong>Drop a road image</strong>
+          <span>or click to choose (JPG, PNG)</span>
+        </label>
+      </section>
+
+      <section data-panel="video" hidden>
+        <label class="dropzone">
+          <input type="file" id="videoInput" accept="video/*" hidden>
+          <strong>Choose a dashcam video</strong>
+          <span id="videoName">Frames are sent to the API while it plays</span>
+        </label>
+        <button class="btn" id="videoToggle" disabled>Start</button>
+      </section>
+
+      <section data-panel="webcam" hidden>
+        <p class="hint">Uses your camera. Frames are sent to the API in real time.</p>
+        <button class="btn" id="webcamToggle">Start camera</button>
+      </section>
+
+      <div class="field">
+        <label for="modelSelect">Model</label>
+        <select id="modelSelect" disabled><option>Loading…</option></select>
+      </div>
+      <div class="field">
+        <label for="conf">Confidence <output id="confOut">0.25</output></label>
+        <input type="range" id="conf" min="0.05" max="0.95" step="0.05" value="0.25">
+      </div>
+      <div class="field">
+        <label for="iou">IoU threshold (NMS) <output id="iouOut">0.45</output></label>
+        <input type="range" id="iou" min="0.10" max="0.90" step="0.05" value="0.45">
+      </div>
+      <label class="check"><input type="checkbox" id="showLabels" checked> Show labels</label>
+
+      <div class="legend" id="legend"></div>
+    </aside>
+
+    <section class="panel viewer">
+      <div class="stage" id="stage">
+        <div class="empty" id="emptyState">Upload an image or start a video to see detections</div>
+        <canvas id="canvas" hidden></canvas>
+        <video id="video" playsinline muted hidden></video>
+      </div>
+      <div class="viewer-actions">
+        <span id="status" class="status" role="status"></span>
+        <div class="action-group">
+          <button class="btn ghost" id="resetBtn" disabled>Reset</button>
+          <button class="btn ghost" id="downloadBtn" disabled>Download result</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel results">
+      <div class="stats">
+        <div class="stat"><span class="label">Detections</span><span class="value" id="totalCount">–</span></div>
+        <div class="stat"><span class="label">Inference</span><span class="value" id="inferMs">–</span></div>
+        <div class="stat"><span class="label">FPS</span><span class="value" id="fps">–</span></div>
+      </div>
+
+      <h2>By class</h2>
+      <ul class="class-list" id="classList"></ul>
+
+      <h2>Detections</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Class</th><th>Conf.</th><th>Size (px)</th></tr></thead>
+          <tbody id="detTable"><tr><td colspan="3" class="muted">No detections yet</td></tr></tbody>
+        </table>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/static/app.js?v=6"></script>
+</body>
+</html>

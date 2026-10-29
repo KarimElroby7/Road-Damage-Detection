@@ -1,0 +1,9 @@
+# Roboflow project-dvd12/road-damage-eul7g v3 - test split only (429 images)
+path: .
+train: test/images
+val: test/images
+test: test/images
+names:
+  0: Crack
+  1: Manhole
+  2: Pothole

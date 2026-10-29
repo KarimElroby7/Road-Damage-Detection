@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Road Damage Object Detection — Report</title>
+<style>
+  @page { size: A4; margin: 16mm 16mm 18mm 16mm; }
+  :root { --ink: #1f1f1e; --ink2: #5f5e5a; --line: #e1e0dc; --soft: #f4f4f2; --accent: #2a78d6;
+          --v8: #2a78d6; --v11: #eb6834; --v26: #1baf7a; }
+  * { box-sizing: border-box; }
+  body { font: 10.4pt/1.5 "Segoe UI", system-ui, sans-serif; color: var(--ink); margin: 0; }
+  h1 { font-size: 26pt; line-height: 1.15; margin: 0 0 6px; }
+  h2 { font-size: 15pt; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--accent); break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 14px 0 4px; break-after: avoid; }
+  p { margin: 6px 0; }
+  ul { margin: 4px 0 8px; padding-left: 20px; }
+  li { margin: 2px 0; }
+  code { font: 9pt Consolas, monospace; background: var(--soft); padding: 1px 4px; border-radius: 3px; }
+  pre { font: 8.8pt/1.45 Consolas, monospace; background: var(--soft); padding: 8px 10px; border-radius: 6px; margin: 6px 0; white-space: pre-wrap; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 9.2pt; break-inside: avoid; }
+  th, td { padding: 5px 7px; border-bottom: 1px solid var(--line); text-align: left; font-variant-numeric: tabular-nums; }
+  th { background: var(--soft); font-weight: 600; }
+  td.n, th.n { text-align: right; }
+  .best { font-weight: 700; }
+  figure { margin: 10px 0; break-inside: avoid; text-align: center; }
+  figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 4px; }
+  figcaption { font-size: 8.8pt; color: var(--ink2); margin-top: 4px; }
+  .cap { font-size: 8.8pt; color: var(--ink2); margin: 2px 0 10px; }
+  .page-break { break-before: page; }
+  .cover { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .cover .top { margin-top: 30mm; }
+  .cover .kicker { color: var(--accent); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 10pt; }
+  .cover .sub { font-size: 13pt; color: var(--ink2); margin-top: 10px; }
+  .cover img.logo { width: 64px; height: 64px; margin-bottom: 18px; }
+  .meta { font-size: 10pt; color: var(--ink2); border-top: 1px solid var(--line); padding-top: 10px; }
+  .meta b { color: var(--ink); }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+  .kpi { background: var(--soft); border-radius: 8px; padding: 9px 11px; }
+  .kpi .l { font-size: 8.5pt; color: var(--ink2); }
+  .kpi .v { font-size: 15pt; font-weight: 700; }
+  .kpi .s { font-size: 8.3pt; color: var(--ink2); }
+  .callout { border-left: 4px solid var(--accent); background: #eef4fc; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 10px 0; break-inside: avoid; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
+  .arch { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0; flex-wrap: wrap; break-inside: avoid; }
+  .arch .box { border: 1.5px solid var(--accent); border-radius: 8px; padding: 7px 10px; text-align: center; font-size: 9pt; min-width: 108px; background: #f7faff; }
+  .arch .box b { display: block; font-size: 9.6pt; }
+  .arch .arr { color: var(--ink2); font-size: 14pt; }
+  .toc li { margin: 3px 0; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="top">
+    <img class="logo" src="../road_damage_app/app/static/logo.svg" alt="">
+    <div class="kicker">Sprint 2 · Deep Learning &amp; Computer Vision</div>
+    <h1>Road Damage Object Detection</h1>
+    <div class="sub">Training, comparison and deployment of YOLOv8s, YOLO11s and YOLO26s<br>for detecting cracks, potholes and manholes in road images</div>
+
+    <div class="kpis" style="margin-top:34px">
+      <div class="kpi"><div class="l">Best model</div><div class="v">YOLO26s</div><div class="s">highest accuracy</div></div>
+      <div class="kpi"><div class="l">Test mAP50 / 50-95</div><div class="v">0.654 / 0.376</div><div class="s">429 unseen images</div></div>
+      <div class="kpi"><div class="l">GPU speed (FP16)</div><div class="v">53–84 FPS</div><div class="s">RTX 3060 Laptop</div></div>
+      <div class="kpi"><div class="l">Deployment</div><div class="v">FastAPI</div><div class="s">+ web dashboard</div></div>
+    </div>
+
+    <h3 style="margin-top:28px">Contents</h3>
+    <ol class="toc">
+      <li>Objective</li>
+      <li>Dataset and preparation</li>
+      <li>Models and training setup</li>
+      <li>Evaluation protocol</li>
+      <li>Results</li>
+      <li>Comparative analysis and discussion</li>
+      <li>Deployment application</li>
+      <li>Conclusion</li>
+      <li>Appendix: project structure and how to run</li>
+    </ol>
+  </div>
+  <div class="meta">
+    <b>Prepared by:</b> Karim Elroby &nbsp;·&nbsp; <b>Program:</b> INSTANT AI &amp; Data Analysis Training &nbsp;·&nbsp; <b>Date:</b> 29 October 2026
+  </div>
+</section>
+
+<!-- ============ 1 OBJECTIVE ============ -->
+<h2 class="page-break">1. Objective</h2>
+<p>Build, compare and deploy an AI system that detects and localizes road damage in images using YOLO-based object detection. The project covers:</p>
+<ul>
+  <li>Training three YOLO generations — <b>YOLOv8s</b>, <b>YOLO11s</b> and <b>YOLO26s</b> — on the same data with the same settings.</li>
+  <li>Comparing them on <b>mAP</b>, <b>precision / recall</b>, <b>IoU</b>, <b>inference speed (FPS)</b>, <b>model size</b> and <b>deployment efficiency</b> (ONNX export).</li>
+  <li>A comparative analysis of the results.</li>
+  <li>A deployment application (<b>FastAPI</b> backend + web dashboard) for image-based and real-time detection.</li>
+</ul>
+<p>Detected classes: <span class="swatch" style="background:var(--v8)"></span><b>Crack</b>, <span class="swatch" style="background:var(--v11)"></span><b>Manhole</b>, <span class="swatch" style="background:var(--v26)"></span><b>Pothole</b>. Manholes are not damage, but detecting them explicitly prevents the model from confusing round manhole covers with potholes.</p>
+
+<!-- ============ 2 DATASET ============ -->
+<h2>2. Dataset and preparation</h2>
+<p>The data is managed in a Roboflow project (<code>project-dvd12/road-damage-eul7g</code>). It combines road-damage images (cracks, potholes, manholes) with an additional set of manhole images to balance the classes. The project holds <b>4,643 images</b> and <b>6,323 bounding boxes</b>.</p>
+
+<h3>2.1 Data cleaning</h3>
+<ul>
+  <li><b>Unlabeled images removed.</b> The dataset health check reported <b>802 "null" images</b> (no annotations). Manual inspection showed that most of them actually contain visible manholes and potholes that were never labeled. Training on them would teach the model that these objects are background, so they were tagged <code>unlabeled</code> and excluded with a <i>Filter by Tag</i> step (not deleted).</li>
+  <li><b>Class names unified.</b> <code>manholes</code> was renamed to <code>Manhole</code> (2,116 labels) to match <code>Crack</code> and <code>Pothole</code>.</li>
+  <li><b>No missing annotations</b> remained in the final version.</li>
+</ul>
+
+<h3>2.2 Dataset versions</h3>
+<table>
+  <tr><th>Version</th><th>Resize</th><th>Offline augmentation</th><th>Split (train / valid / test)</th><th>Decision</th></tr>
+  <tr><td>v1</td><td>Stretch to 512×512</td><td>×3 (flip, brightness, noise)</td><td>3,957 / 352 / 87</td><td>Rejected: stretching distorts crack/pothole shapes; test set too small (87)</td></tr>
+  <tr><td>v2</td><td>Fit (black edges) 640×640</td><td>×3 (flip, brightness, noise)</td><td>≈3,700 / 352 / 175</td><td>Rejected: offline augmentation duplicates images and overlaps with YOLO's online augmentation</td></tr>
+  <tr><td><b>v3 (final)</b></td><td><b>Fit (black edges) 640×640</b></td><td><b>None</b> (online augmentation in training)</td><td><b>2,592 / 820 / 429</b></td><td><b>Used for all models</b></td></tr>
+</table>
+<p class="cap">Fit keeps the aspect ratio (letterboxing), so thin cracks are not stretched. Augmentation is applied on the fly by Ultralytics during training instead (mosaic, flips, HSV, scale, translate), which produces different variants every epoch.</p>
+
+<h3>2.3 Final dataset (v3)</h3>
+<table>
+  <tr><th>Split</th><th class="n">Images</th><th class="n">Boxes</th><th class="n">Crack</th><th class="n">Manhole</th><th class="n">Pothole</th></tr>
+  <tr><td>Train</td><td class="n">2,592</td><td class="n">4,243</td><td class="n">1,601</td><td class="n">1,443</td><td class="n">1,199</td></tr>
+  <tr><td>Valid</td><td class="n">820</td><td class="n">1,290</td><td class="n">425</td><td class="n">481</td><td class="n">384</td></tr>
+  <tr><td>Test</td><td class="n">429</td><td class="n">790</td><td class="n">267</td><td class="n">192</td><td class="n">331</td></tr>
+  <tr><th>Total</th><th class="n">3,841</th><th class="n">6,323</th><th class="n">2,293</th><th class="n">2,116</th><th class="n">1,914</th></tr>
+</table>
+<p class="cap">The three classes are reasonably balanced (30–36% of boxes each). The split is fixed inside the Roboflow version, so all three models saw exactly the same training, validation and test images.</p>
+
+<!-- ============ 3 MODELS ============ -->
+<h2>3. Models and training setup</h2>
+<table>
+  <tr><th>Model</th><th>Generation</th><th class="n">Params (M)</th><th class="n">GFLOPs @640</th><th>Pretrained weights</th></tr>
+  <tr><td><span class="swatch" style="background:var(--v8)"></span>YOLOv8s</td><td>Ultralytics YOLOv8</td><td class="n">11.14</td><td class="n">28.6</td><td>COCO <code>yolov8s.pt</code></td></tr>
+  <tr><td><span class="swatch" style="background:var(--v11)"></span>YOLO11s</td><td>Ultralytics YOLO11</td><td class="n">9.43</td><td class="n">21.7</td><td>COCO <code>yolo11s.pt</code></td></tr>
+  <tr><td><span class="swatch" style="background:var(--v26)"></span>YOLO26s</td><td>Ultralytics YOLO26</td><td class="n">9.95</td><td class="n">22.7</td><td>COCO <code>yolo26s.pt</code></td></tr>
+</table>
+<p>All models use the same size variant (<b>s</b>) so the comparison reflects the architecture, not the model size. They were fine-tuned from COCO weights with an <b>identical configuration</b>:</p>
+<div class="two">
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Epochs / early stopping</td><td>100 / patience 20</td></tr>
+  <tr><td>Image size · batch</td><td>640 · 16</td></tr>
+  <tr><td>Optimizer</td><td>AdamW, lr0 = 0.001, lrf = 0.01</td></tr>
+  <tr><td>Weight decay · warm-up</td><td>0.0005 · 3 epochs</td></tr>
+  <tr><td>Seed · deterministic</td><td>42 · yes</td></tr>
+</table>
+<table>
+  <tr><th>Online augmentation</th><th>Value</th></tr>
+  <tr><td>Mosaic (closed last 10 epochs)</td><td>1.0</td></tr>
+  <tr><td>Horizontal flip</td><td>0.5</td></tr>
+  <tr><td>HSV hue / sat / value</td><td>0.015 / 0.7 / 0.4</td></tr>
+  <tr><td>Scale · translate</td><td>0.5 · 0.1</td></tr>
+  <tr><td>Training hardware</td><td>NVIDIA Tesla T4 (Kaggle / Colab)</td></tr>
+</table>
+</div>
+<p class="cap">Training notebooks (<code>notebooks/</code>): <code>road_damage_yolov8s.ipynb</code>, <code>road_damage_yolo11s.ipynb</code>, <code>road_damage_yolo26s.ipynb</code> (identical except for the model name). The best checkpoint (<code>best.pt</code>, highest validation fitness) of each run is used below.</p>
+
+<!-- ============ 4 PROTOCOL ============ -->
+<h2>4. Evaluation protocol</h2>
+<p>To make the comparison fair, all three <code>best.pt</code> files were evaluated with one script (<code>evaluation/evaluate.py</code>) on the <b>same 429 test images</b> (never used for training or model selection) and on the <b>same machine</b>: NVIDIA GeForce RTX 3060 Laptop GPU (6 GB) and Intel Core i5-11400H CPU, PyTorch 2.14 + CUDA 13.0.</p>
+<table>
+  <tr><th>Metric</th><th>How it is measured</th></tr>
+  <tr><td>mAP50, mAP50-95</td><td>Ultralytics validation on the test split (IoU threshold 0.5, and averaged over 0.5–0.95)</td></tr>
+  <tr><td>Precision, Recall</td><td>Mean over classes at the confidence that maximizes F1</td></tr>
+  <tr><td>Mean IoU</td><td>Predictions (conf ≥ 0.25) matched greedily to the same-class ground-truth box with the highest IoU (≥ 0.5); average IoU of these true positives = localization quality</td></tr>
+  <tr><td>Inference speed / FPS</td><td>Batch size 1, average over all test images (pre-process + inference + post-process). GPU in FP16, CPU in FP32, 10 warm-up images</td></tr>
+  <tr><td>Model size</td><td><code>best.pt</code> file size, number of parameters, GFLOPs at 640×640</td></tr>
+  <tr><td>Deployment efficiency</td><td>Export to ONNX; ONNX file size, CPU speed with ONNX Runtime, and test mAP of the ONNX model (accuracy kept after export)</td></tr>
+</table>
+
+<!-- ============ 5 RESULTS ============ -->
+<h2>5. Results</h2>
+<h3>5.1 Overall comparison</h3>
+<table>
+  <tr><th>Model</th><th class="n">mAP50</th><th class="n">mAP50-95</th><th class="n">Precision</th><th class="n">Recall</th><th class="n">Mean IoU</th><th class="n">GPU FPS</th><th class="n">GPU ms</th><th class="n">CPU FPS</th><th class="n">ONNX CPU FPS</th><th class="n">Size (MB)</th></tr>
+  <tr><td>YOLOv8s</td><td class="n">0.622</td><td class="n">0.346</td><td class="n">0.704</td><td class="n">0.599</td><td class="n">0.782</td><td class="n best">84</td><td class="n best">11.9</td><td class="n">9.2</td><td class="n">7.9</td><td class="n">22.5</td></tr>
+  <tr><td>YOLO11s</td><td class="n">0.636</td><td class="n">0.361</td><td class="n">0.693</td><td class="n best">0.615</td><td class="n">0.784</td><td class="n">66</td><td class="n">15.2</td><td class="n best">10.0</td><td class="n best">9.4</td><td class="n best">19.2</td></tr>
+  <tr><td><b>YOLO26s</b></td><td class="n best">0.654</td><td class="n best">0.376</td><td class="n best">0.761</td><td class="n">0.605</td><td class="n best">0.790</td><td class="n">53</td><td class="n">18.9</td><td class="n">9.3</td><td class="n">9.3</td><td class="n">20.3</td></tr>
+</table>
+<p class="cap">Bold = best value per column. GPU = RTX 3060 Laptop, FP16, batch 1. CPU = Intel Core i5-11400H.</p>
+
+<figure><img src="figures/accuracy.png" style="width:92%"><figcaption>Figure 1 — Accuracy metrics on the test set (429 images).</figcaption></figure>
+
+<h3>5.2 Per-class results</h3>
+<table>
+  <tr><th rowspan="2">Model</th><th colspan="3" style="text-align:center">Crack</th><th colspan="3" style="text-align:center">Manhole</th><th colspan="3" style="text-align:center">Pothole</th></tr>
+  <tr><th class="n">AP50</th><th class="n">AP50-95</th><th class="n">Recall</th><th class="n">AP50</th><th class="n">AP50-95</th><th class="n">Recall</th><th class="n">AP50</th><th class="n">AP50-95</th><th class="n">Recall</th></tr>
+  <tr><td>YOLOv8s</td><td class="n">0.292</td><td class="n">0.136</td><td class="n">0.303</td><td class="n">0.892</td><td class="n">0.578</td><td class="n">0.862</td><td class="n">0.681</td><td class="n">0.324</td><td class="n">0.631</td></tr>
+  <tr><td>YOLO11s</td><td class="n">0.308</td><td class="n">0.148</td><td class="n">0.307</td><td class="n best">0.902</td><td class="n">0.602</td><td class="n best">0.870</td><td class="n">0.699</td><td class="n">0.332</td><td class="n best">0.668</td></tr>
+  <tr><td>YOLO26s</td><td class="n best">0.355</td><td class="n best">0.167</td><td class="n best">0.333</td><td class="n">0.899</td><td class="n best">0.606</td><td class="n best">0.870</td><td class="n best">0.707</td><td class="n best">0.356</td><td class="n">0.613</td></tr>
+</table>
+<p class="cap">Bold = best per column. Precision per class (Crack / Manhole / Pothole): YOLOv8s 0.585 / 0.825 / 0.701 · YOLO11s 0.560 / 0.832 / 0.686 · YOLO26s 0.628 / 0.865 / 0.790.</p>
+<figure><img src="figures/per_class.png"><figcaption>Figure 2 — AP50, AP50-95 and recall per class.</figcaption></figure>
+
+<h3>5.3 Speed, size and deployment efficiency</h3>
+<figure><img src="figures/speed.png"><figcaption>Figure 3 — Inference speed (batch 1): GPU FP16, CPU PyTorch and CPU ONNX Runtime.</figcaption></figure>
+<figure><img src="figures/size.png"><figcaption>Figure 4 — Model size: file size, parameters and GFLOPs.</figcaption></figure>
+<table>
+  <tr><th>Model</th><th class="n">GPU latency (pre / infer / post ms)</th><th class="n">CPU ms</th><th class="n">ONNX size (MB)</th><th class="n">ONNX CPU ms</th><th class="n">ONNX mAP50-95</th><th class="n">Drop vs PyTorch</th></tr>
+  <tr><td>YOLOv8s</td><td class="n">1.0 / 9.2 / 1.7</td><td class="n">108.5</td><td class="n">44.7</td><td class="n">126.2</td><td class="n">0.338</td><td class="n">−0.008</td></tr>
+  <tr><td>YOLO11s</td><td class="n">1.3 / 12.1 / 1.8</td><td class="n">100.1</td><td class="n">37.9</td><td class="n">106.8</td><td class="n">0.356</td><td class="n">−0.005</td></tr>
+  <tr><td>YOLO26s</td><td class="n">1.3 / 15.7 / 1.9</td><td class="n">107.2</td><td class="n">38.2</td><td class="n">107.1</td><td class="n best">0.374</td><td class="n best">−0.002</td></tr>
+</table>
+
+<figure><img src="figures/tradeoff.png" style="width:62%"><figcaption>Figure 5 — Accuracy vs. GPU speed (marker size = model size). Top-right is best.</figcaption></figure>
+
+<h3>5.4 Confusion matrices (normalized)</h3>
+<div class="two">
+  <figure><img src="figures/cm_yolo26s.png"><figcaption>Figure 6 — YOLO26s.</figcaption></figure>
+  <figure><img src="figures/cm_yolov8s.png"><figcaption>Figure 7 — YOLOv8s.</figcaption></figure>
+</div>
+<p class="cap">Columns are true classes, rows are predictions. The "background" column contains false positives, the "background" row contains missed objects. For all models most false positives are cracks, and cracks are also the most frequently missed class.</p>
+
+<h3>5.5 Qualitative results</h3>
+<figure><img src="figures/qualitative.png"><figcaption>Figure 8 — Ground truth vs. predictions (conf ≥ 0.25) on four test images: crack, potholes, manhole, mixed scene.</figcaption></figure>
+
+<!-- ============ 6 DISCUSSION ============ -->
+<h2 class="page-break">6. Comparative analysis and discussion</h2>
+
+<h3>6.1 Accuracy</h3>
+<ul>
+  <li><b>The newer the generation, the more accurate:</b> YOLO26s &gt; YOLO11s &gt; YOLOv8s on mAP50 (0.654 / 0.636 / 0.622), mAP50-95 (0.376 / 0.361 / 0.346) and mean IoU (0.790 / 0.784 / 0.782). The ranking is consistent across all accuracy metrics, although the gaps are moderate (+3.2 mAP50 points from YOLOv8s to YOLO26s).</li>
+  <li><b>YOLO26s is clearly the most precise</b> (0.761 vs ≈0.70): it produces fewer false alarms at a similar recall (≈0.60–0.62). For a road-inspection tool this means fewer wasted inspections.</li>
+  <li><b>Localization is similar for all models</b> (mean IoU ≈0.78–0.79): when a damage is found, the box is tight in every case; the differences come mainly from <i>what</i> is found.</li>
+</ul>
+
+<h3>6.2 Per-class behaviour</h3>
+<ul>
+  <li><b>Manhole is easy</b> (AP50 ≈0.89–0.90, recall 0.87): manhole covers have a distinctive round shape and texture.</li>
+  <li><b>Pothole is moderate</b> (AP50 ≈0.68–0.71): the boundary of a pothole is not well defined, which lowers AP50-95.</li>
+  <li><b>Crack is the hardest class</b> (AP50 0.29–0.36, recall ≈0.30–0.33). Cracks are thin, long and low-contrast; a single crack may be annotated as one box in one image and as several pieces in another; and an axis-aligned box around a diagonal crack is mostly background. These effects make both detection and the IoU-based AP50-95 difficult. <b>YOLO26s gives the largest improvement exactly on this class</b> (+6.3 AP50 points over YOLOv8s).</li>
+  <li><b>Confusions between classes are rare</b> (≤7%); the dominant error is crack vs. background, not crack vs. pothole.</li>
+</ul>
+
+<h3>6.3 Speed and size</h3>
+<ul>
+  <li><b>All three models run in real time on the GPU</b> (53–84 FPS in FP16, batch 1). <b>YOLOv8s is the fastest</b> (11.9 ms per image) despite having the most parameters and FLOPs; the newer architectures use extra attention-style blocks that improve accuracy but add latency at batch size 1.</li>
+  <li><b>On the CPU the models are almost equal</b> (≈9–10 FPS). YOLO11s is the lightest model (9.4 M parameters, 19.2 MB) and the fastest on the CPU.</li>
+  <li><b>ONNX export keeps the accuracy</b> (drop ≤ 0.008 mAP50-95; only 0.002 for YOLO26s), so every model can be deployed without PyTorch. On this CPU, ONNX Runtime was not faster than PyTorch; its benefit is portability (no PyTorch dependency, runs on edge runtimes).</li>
+</ul>
+
+<h3>6.4 Model selection</h3>
+<p>A weighted score combines the requirements for a deployment app (min-max normalized; mAP50-95 40%, ONNX CPU speed 20%, recall 15%, mean IoU 10%, model size 10%, GPU speed 5%):</p>
+<table style="width:60%">
+  <tr><th>Model</th><th class="n">Weighted score</th><th>Rank</th></tr>
+  <tr><td><b>YOLO26s</b></td><td class="n best">0.824</td><td>1</td></tr>
+  <tr><td>YOLO11s</td><td class="n">0.683</td><td>2</td></tr>
+  <tr><td>YOLOv8s</td><td class="n">0.050</td><td>3</td></tr>
+</table>
+<div class="callout"><b>Selected model: YOLO26s.</b> It is the most accurate (highest mAP, precision and IoU, and the best crack detector), keeps its accuracy after ONNX export, and is still real-time on the GPU (53 FPS). It is the default model of the deployment app.<br>
+<b>When to choose another model:</b> YOLOv8s when maximum GPU throughput matters more than accuracy (e.g. many camera streams); YOLO11s for CPU-only or memory-constrained devices (smallest and fastest on CPU). All three are available in the app.</div>
+
+<h3>6.5 Limitations</h3>
+<ul>
+  <li><b>Label noise.</b> The data was merged from several sources. Some drains and manholes are still unlabeled (Figure 8, third row: the models detect drain grates that have no ground-truth box), so part of the measured "false positives" are correct detections. About 6% of the test images (25 / 429) are stock photos or illustrations rather than real road images.</li>
+  <li><b>Crack annotations are inconsistent</b> (one box vs. several boxes per crack), which limits the achievable crack AP for every model.</li>
+  <li><b>Test-set size.</b> With 429 test images, differences of about 0.01 mAP between models are within normal variation; the overall ranking is consistent across metrics, but small gaps should not be over-interpreted.</li>
+</ul>
+
+<!-- ============ 7 DEPLOYMENT ============ -->
+<h2 class="page-break">7. Deployment application</h2>
+<p>The selected models are served by a <b>FastAPI</b> backend with a web dashboard (folder <code>road_damage_app/</code>).</p>
+<div class="arch">
+  <div class="box"><b>Road input</b>image · video · webcam</div><div class="arr">→</div>
+  <div class="box"><b>Web dashboard</b>HTML + JS, draws boxes</div><div class="arr">→</div>
+  <div class="box"><b>FastAPI backend</b>POST /api/detect</div><div class="arr">→</div>
+  <div class="box"><b>YOLO models</b>v8s · 11s · 26s (GPU FP16)</div><div class="arr">→</div>
+  <div class="box"><b>Detection results</b>JSON: class, conf, box</div>
+</div>
+<figure><img src="figures/dashboard.png"><figcaption>Figure 9 — Web dashboard (model selector, confidence and IoU sliders, live statistics).</figcaption></figure>
+
+<div class="two">
+<div>
+<h3>Backend (FastAPI)</h3>
+<ul>
+  <li>Loads <b>all three models</b> once at start-up on the GPU (FP16), or on the CPU if no GPU is present; <code>.onnx</code> files are supported too.</li>
+  <li><code>GET /api/models</code> — available models and the default (YOLO26s).</li>
+  <li><code>POST /api/detect</code> — image + <code>model</code>, <code>conf</code>, <code>iou</code>, <code>imgsz</code>; returns boxes, class, confidence, counts per class and timing.</li>
+  <li>Input validation (image type, 15 MB limit, parameter ranges), thread-safe inference, interactive API docs at <code>/docs</code>.</li>
+  <li>8 automated API tests (<code>pytest</code>), all passing.</li>
+</ul>
+</div>
+<div>
+<h3>Dashboard</h3>
+<ul>
+  <li><b>Image mode:</b> drag-and-drop a road image; changing the model or the sliders re-runs detection instantly.</li>
+  <li><b>Video mode:</b> a local dashcam video is processed frame by frame in real time while it plays.</li>
+  <li><b>Webcam mode:</b> live camera detection.</li>
+  <li>Statistics: detections, inference time, FPS, counts per class, detection table; download of the annotated result; reset.</li>
+</ul>
+</div>
+</div>
+<p>On the RTX 3060 Laptop GPU, model inference takes about <b>12–19 ms per image</b> (Table 5.3); a full request including upload and decoding takes roughly 50–90 ms in the browser, which is fast enough for interactive and video use.</p>
+
+<!-- ============ 8 CONCLUSION ============ -->
+<h2>8. Conclusion</h2>
+<ul>
+  <li>Three YOLO generations were trained on the same cleaned dataset (3,841 images, 3 classes) with identical settings and evaluated on the same 429 unseen test images and hardware.</li>
+  <li><b>YOLO26s</b> is the most accurate model (mAP50 0.654, mAP50-95 0.376, precision 0.761) and the best on the hardest class (cracks); <b>YOLOv8s</b> is the fastest on the GPU (84 FPS); <b>YOLO11s</b> is the smallest and fastest on the CPU.</li>
+  <li>All models are real-time on a consumer GPU and keep their accuracy after ONNX export.</li>
+  <li>Cracks remain the main challenge (AP50 ≤ 0.36), mostly because of thin shapes and inconsistent annotations; cleaner and more consistent crack labels would give the biggest improvement.</li>
+  <li>The FastAPI application makes the models usable for image-based and real-time road damage detection, with YOLO26s as the default.</li>
+</ul>
+
+<!-- ============ APPENDIX ============ -->
+<h2>Appendix: project structure and how to run</h2>
+<pre>road-damage-detection/
+├── notebooks/                 training notebooks (YOLOv8s, YOLO11s, YOLO26s) + comparison notebook
+├── evaluation/
+│   ├── download_test_data.py  downloads the Roboflow v3 test split
+│   ├── evaluate.py            same-hardware evaluation of the 3 models (test split)
+│   ├── compare.py             comparison table, charts, weighted ranking
+│   ├── qualitative.py         ground truth vs. predictions figure
+│   ├── results/               *_results.json, confusion matrices
+│   └── comparison/            comparison.md, comparison_table.csv, figures
+├── road_damage_app/           FastAPI backend + web dashboard
+│   ├── app/main.py, app/detector.py, app/static/
+│   ├── models/                trained weights: yolov8s.pt, yolo11s.pt, yolo26s.pt
+│   └── run.py, tests/, requirements.txt, Dockerfile
+├── report/                    this report
+└── sample_test/               test images per class for quick checks</pre>
+<p><b>Run the application</b> (Windows, from <code>road_damage_app</code>):</p>
+<pre>.venv\Scripts\python run.py        →  http://localhost:8000   (API docs: /docs)</pre>
+<p><b>Reproduce the evaluation</b> (from <code>evaluation</code>):</p>
+<pre>..\road_damage_app\.venv\Scripts\python evaluate.py
+..\road_damage_app\.venv\Scripts\python compare.py</pre>
+
+</body>
+</html>

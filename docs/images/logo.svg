@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <rect width="40" height="40" rx="10" fill="#2a78d6"/>
+  <!-- asphalt road in perspective -->
+  <path d="M12.5 34 L18 8.5 h4 L27.5 34 Z" fill="#1f1f1e"/>
+  <!-- centre line -->
+  <path d="M20 11.5v3.5M20 18.5v4M20 26v5" stroke="#eda100" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- pothole -->
+  <ellipse cx="23.2" cy="27.8" rx="2" ry="1.1" fill="#6b6a65"/>
+  <!-- detection box corners -->
+  <path d="M6.5 12.5V7.5h5M33.5 12.5V7.5h-5M6.5 27.5v5h5M33.5 27.5v5h-5" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
