@@ -27,7 +27,10 @@ def open_when_ready(url: str, timeout: float = 120):
     while time.time() < deadline:
         try:
             urllib.request.urlopen(url + "api/health", timeout=2)
-            webbrowser.open(url)
+            if os.name == "nt":
+                os.startfile(url)  # system default browser; ignores VS Code's BROWSER override
+            else:
+                webbrowser.open(url)
             return
         except OSError:
             time.sleep(0.5)
