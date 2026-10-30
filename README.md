@@ -117,7 +117,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Open <http://localhost:8000>. Sample test images per class are in [`sample_test/`](sample_test). More details: [`road_damage_app/README.md`](road_damage_app/README.md).
+The dashboard opens automatically in your default browser (<http://localhost:8000>; set `OPEN_BROWSER=0` to disable). Sample test images per class are in [`sample_test/`](sample_test). More details: [`road_damage_app/README.md`](road_damage_app/README.md).
 
 Tests: `pip install pytest httpx && pytest -q` (inside `road_damage_app`).
 
